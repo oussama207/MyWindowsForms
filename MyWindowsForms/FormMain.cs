@@ -31,6 +31,7 @@ namespace MyWindowsForms
         // Show Message
         //MessageBox.Show("Hello");
 
+        //ok
         // Get/Set text
         // XXX.Text;
 
@@ -40,7 +41,7 @@ namespace MyWindowsForms
         // Location
         // XXX.Top = YYY;
         // XXX.Left = YYY;
-        // XXX.Location = new Point(x,y); 
+        // XXX.Location = new Point(x,y);
 
 
     }
