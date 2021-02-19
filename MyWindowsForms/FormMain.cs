@@ -31,7 +31,7 @@ namespace MyWindowsForms
         // Show Message
         //MessageBox.Show("Hello");
 
-        // yes yes
+        // no no
         // Get/Set text
         // XXX.Text;
 
