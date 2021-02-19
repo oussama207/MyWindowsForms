@@ -31,16 +31,24 @@ namespace MyWindowsForms
         private void button2_Click(object sender, EventArgs e)
         {
             try { 
-                if(textBox2.Text.Trim() == "" || textBox3.Text.Trim() == "" || textBox4.Text.Trim() == "" )
+                if(textBox2.Text.Trim() == "" || textBox3.Text.Trim() == "" || textBox4.Text.Trim() == "" || pictureBox1.Image == null)
                 {
                     MessageBox.Show("Enter all");
                     return;
                 }
-
-                StreamReader sr = new StreamReader("Data.txt");
-                string strcheck = sr.ReadToEnd();
-                sr.Close();
-                if(strcheck.Contains("ID : " + textBox2.Text + "\n"))
+                string strcheck;
+                if (File.Exists("Data.txt"))
+                {
+                    StreamReader sr = new StreamReader("Data.txt");
+                    strcheck = sr.ReadToEnd();
+                    sr.Close();
+                }
+                else
+                {
+                    strcheck = "";
+                }
+                
+                if (strcheck.Contains("ID : " + textBox2.Text + "\n"))
                 {
                     MessageBox.Show("This ID Exist");
                     textBox2.Focus();
@@ -54,12 +62,18 @@ namespace MyWindowsForms
                                        + "Address : " + textBox4.Text + "\n";
                     sw.WriteLine(strPerson);
                     sw.Close();
+                    if (!Directory.Exists("img"))
+                    {
+                        Directory.CreateDirectory("img");
+                    }
+                    pictureBox1.Image.Save("img/" + textBox2.Text + ".jpg");
                     MessageBox.Show("Person Is Added");
                     foreach(Control c in this.Controls)
                     {
                         if (c is TextBox)
                             c.Text = "";
-                    }
+                     }
+                    pictureBox1.Image = new PictureBox().Image;
                     textBox2.Focus();
                 }
             }
@@ -100,6 +114,10 @@ namespace MyWindowsForms
                                 found = true;
                                 textBox3.Text = arrData[1];
                                 textBox4.Text = arrData[2];
+                                if(File.Exists("img/" + arrData[0] + ".jpg"))
+                                {
+                                    pictureBox1.Image = Image.FromFile("img/" + arrData[0] + ".jpg");
+                                }
                                 break;
                             }
                         }
@@ -149,6 +167,72 @@ namespace MyWindowsForms
                 txt.Text = data;
             }
             catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            frm.ShowDialog();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+             OpenFileDialog xxx = new OpenFileDialog();
+            if(xxx.ShowDialog() == DialogResult.OK)
+            {
+                pictureBox1.Image = Image.FromFile(xxx.FileName);
+            }
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            Form frm = new Form();
+            frm.StartPosition = FormStartPosition.CenterScreen;
+            frm.Font = this.Font;
+            frm.Icon = this.Icon;
+            frm.Size = this.Size;
+            frm.Height += 300;
+            frm.Text = "All Data Images";
+            frm.AutoScroll = true;
+
+
+            try
+            {
+                StreamReader sr = new StreamReader("Data.txt");
+                string data = "";
+                string tmp = sr.ReadLine();
+                int myTop = 10;
+                while (tmp != null)
+                {
+                    data = tmp;
+                    data += "\r\n" + sr.ReadLine();
+                    data += "\r\n" + sr.ReadLine();
+                    sr.ReadLine();
+                    TextBox txt = new TextBox();
+                    PictureBox pic = new PictureBox();
+                    txt.Width = 300;
+                    txt.Height = 100;
+                    txt.Top = myTop;
+                    txt.Multiline = true;
+                    txt.Text = data;
+                    pic.Left = 305;
+                    pic.Top = myTop;
+                    pic.Size = new Size(100, 100);
+                    pic.BorderStyle = BorderStyle.FixedSingle;
+                    pic.SizeMode = PictureBoxSizeMode.StretchImage;
+                    myTop += 150;                    
+                    tmp = tmp.Substring(5);
+                    if(File.Exists("img/" + tmp + ".jpg"))
+                        pic.Image = Image.FromFile("img/" + tmp + ".jpg");
+                    frm.Controls.Add(txt);
+                    frm.Controls.Add(pic);
+
+                    tmp = sr.ReadLine();
+                    data = "";
+
+                }
+                sr.Close();
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
@@ -216,5 +300,43 @@ namespace MyWindowsForms
 
         // Exit 
         //  Application.Exit();
+
+        // Numeric up dow 
+        // xxx.Value;
+
+        // PictureBox
+        // pictureBox1.Image = Properties.Resources.nameOfPic
+        // pictureBox1.Image = Image.FromFile("")
+        // Bitmap yyy = new Bimtmap("name file") ;
+        // xxxx.Image = yyy
+        // File.Open("name of file",FileMode.Open);
+        // Bitmap yyy = new Bimtmap(File.Open("name of file",FileMode.Open)) ;
+        // FileStream xxx =  File.Open("name of file",FileMode.Open);
+        // xxx.Close();
+        // pictureBox1.Image = new PictureBox().Image;
+
+
+        // File 
+        // xxx.InitialDirectory = "C:\\";
+        // xxx.InitialDirectory = Enviroment.GetFolderPath(Enviroment..SpecialFolder.YYYY);
+        // xxx.FileName;
+        // Path.getFileName(xxx.FileName);
+        // Path.getExtension(xxx.FileName);
+        // xxx.Multiselect = true or false
+        // OpenFileDialog xxx = new OpenFileDialog();
+        // xxx.ShowDialog()
+        // DialogResult.OK
+        // SaveFileDialog xxx = new SaveFileDialog();
+        // xxx.Filter = "Description (JPG Images)|*.png"
+        // xxx.Filter = "JPG & PNG Images)*.png;*.jpg"
+        // xxx.FilterIndex = index;
+        // File.Exists()
+        // File.Copy(From,To);
+        // File.Move(,)
+
+        // Remove or Delete Controls
+        //this.Controls[name or index].dispose
+
+
     }
 }
